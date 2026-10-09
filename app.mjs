@@ -21,8 +21,8 @@ function render(){
  $('subtitle').textContent=egg?'Под листьями спит чья-то маленькая история.':'Маленький мир, в котором тебя всегда ждут.';
  $('scene').classList.toggle('egg',egg);$('scene').classList.toggle('sleeping',state.sleeping);$('scene').classList.toggle('sick',!!state.sick);$('home').classList.toggle('paused',state.paused);
  $('phase-label').textContent=egg?'Лесная колыбель':state.sleeping?'Сладкие сны':'Дом маленького чуда';
- const image=$('pet-image'),path=`./assets/${egg?'egg':state.species}.png`;if(image.getAttribute('src')!==path)image.src=path;
- image.alt=egg?'Лесное яйцо с живыми веточками и листиками':TYPES[state.species].title;
+ const image=$('pet-image'),path=`./assets/${egg?'egg':state.species+(state.sleeping?'-sleep':'')}.png`;if(image.getAttribute('src')!==path)image.src=path;
+ image.alt=egg?'Лесное яйцо с живыми веточками и листиками':TYPES[state.species].title+(state.sleeping?' · лежит и спит с закрытыми глазами':'');
  const size=egg?1:days<7?.92:days<30?.97:days<90?1:1.05;image.style.width=`${size*100}%`;image.style.height=`${size*100}%`;
  $('pet-stage').textContent=stage(state).toLocaleUpperCase('ru');$('pet-name').textContent=state.name+' ✧';$('age').textContent='День '+(days+1);
  $('pet-trait').textContent=egg?'Кто появится на свет? Забота подскажет лесу.':TYPES[state.species].trait;

@@ -7,3 +7,7 @@
 .offline-card{grid-column:1/-1}.offline-badge{display:inline-block;border-radius:20px;padding:8px 12px;font-size:11px;background:#e9eddf;color:#657452}.offline-badge[data-state="ready"]{background:#deecd1;color:#38552c}.offline-badge[data-state="error"]{background:#f4e5d9;color:#985233}.offline-card #connection-mode{display:block;margin-top:12px}.offline-note{font-size:11px!important}.transfer-help{margin-top:13px;font-size:12px;color:var(--muted)}.transfer-help summary{cursor:pointer;color:var(--green);padding:10px 0}.transfer-help ol{padding-left:20px;line-height:1.7}.transfer-help li{margin:6px 0}
 
 .release-card{grid-column:1/-1}.download-link{display:inline-block;text-decoration:none;text-align:center}
+.scene.sleeping .pet-touch img{animation:sleep-breathe 5.8s ease-in-out infinite;transform-origin:50% 83%;filter:brightness(.92) drop-shadow(0 10px 8px #05180966)}
+.scene.sleeping{background-color:#122d30}.scene.sleeping .sleep-z{font-size:19px;opacity:.65;animation-duration:6s}
+@keyframes sleep-breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.014)}}
+@media(prefers-reduced-motion:reduce){.scene.sleeping .pet-touch img,.scene.sleeping .sleep-z{animation:none}}
