@@ -50,12 +50,12 @@ export function action(s,id,now=Date.now()){
   if(id==='play'){a.mood=clamp(a.mood+20);s.care.play++;msg='Из яйца ответили тихим стуком!';}
   if(id==='soothe'){a.mood=clamp(a.mood+15);s.care.soothe++;msg='Колыбельная убаюкала маленькую тайну.';}
  }else{
-  if(s.sleeping&&id!=='sleep')return 'Питомец спит. Дай ему отдохнуть или разбуди.';
+  if(s.sleeping&&id!=='sleep'&&id!=='soothe')return 'Питомец спит. Дай ему отдохнуть или разбуди.';
   if(id==='feed'){if(a.food>94)return 'Питомец сыт. Попробуй покормить позже.';a.food=clamp(a.food+25);a.clean=clamp(a.clean-3);msg='Поел и довольно облизнулся.';}
   if(id==='play'){if(a.energy<20)return 'Слишком устал для игры. Ему нужен сон.';if(s.sick)return 'Во время болезни лучше отдыхать.';a.mood=clamp(a.mood+22);a.energy=clamp(a.energy-8);a.food=clamp(a.food-4);msg='Поймал светлячка и отпустил обратно в лес.';}
   if(id==='clean'){a.clean=clamp(a.clean+30);a.mood=clamp(a.mood+4);msg='Лапки чистые, шерстка снова мягкая.';}
   if(id==='sleep'){s.sleeping=!s.sleeping;msg=s.sleeping?'Свернулся в клубочек. Сон восстановит силы.':'Сонно потянулся и открыл глаза.';}
-  if(id==='soothe'){a.mood=clamp(a.mood+10);msg='Прижался к твоей ладони.';}
+  if(id==='soothe'){a.mood=clamp(a.mood+10);msg=s.sleeping?'Тихо погладил малыша. Он чувствует твоё тепло и продолжает спать.':'Прижался к твоей ладони.';}
   if(id==='medicine'){if(!s.sick)return 'Он здоров — лекарство сейчас не нужно.';if(s.medicineUntil>now)return 'Лекарство уже действует. Обеспечь сытость, чистоту и отдых.';a.health=clamp(a.health+10);s.medicineUntil=now+30*60000;msg='Принял лесное лекарство. Восстановление займёт 30 минут при хорошем уходе.';}
   if(id==='rescue'){if(a.health>15)return 'Экстренная помощь нужна при здоровье 15 или ниже.';if(s.lastRescue&&now-s.lastRescue<600000)return 'Лесной лекарь вернётся через несколько минут.';s.lastRescue=now;for(const k of ['food','clean','energy'])a[k]=Math.max(a[k],40);a.health=clamp(a.health+25);s.medicineUntil=now+30*60000;msg='Лесной лекарь помог. Теперь особенно нужны забота и отдых.';}
  }
