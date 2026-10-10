@@ -1,4 +1,4 @@
-const CACHE='forest-egg-shell-v1.3.1.0';
+const CACHE='forest-egg-shell-v1.3.2.0';
 const ASSETS=["./index.html","./style.css","./app.mjs","./engine.mjs","./offline.mjs","./pet-art.mjs","./manifest.webmanifest","./icon.svg","./assets/deer-adult-sleep.png","./assets/deer-adult.png","./assets/deer-sleep.png","./assets/deer-teen-sleep.png","./assets/deer-teen.png","./assets/deer-young-sleep.png","./assets/deer-young.png","./assets/deer.png","./assets/egg.png","./assets/fox-adult-sleep.png","./assets/fox-adult.png","./assets/fox-sleep.png","./assets/fox-teen-sleep.png","./assets/fox-teen.png","./assets/fox-young-sleep.png","./assets/fox-young.png","./assets/fox.png","./assets/wolf-adult-sleep.png","./assets/wolf-adult.png","./assets/wolf-sleep.png","./assets/wolf-teen-sleep.png","./assets/wolf-teen.png","./assets/wolf-young-sleep.png","./assets/wolf-young.png","./assets/wolf.png"];
 const scope=new URL(self.registration.scope);
 const absolute=path=>new URL(path,scope).href;
@@ -8,11 +8,11 @@ async function valid(response,path){
  if(!response||!response.ok||response.redirected)return false;
  const contentType=response.headers.get('content-type')||'';
  if(!contentType.includes(mime(path)))return false;
- if(path.endsWith('.html'))return(await response.clone().text()).includes('data-forest-app="1.3.1"');
+ if(path.endsWith('.html'))return(await response.clone().text()).includes('data-forest-app="1.3.2"');
  return true;
 }
 async function broadcast(data){for(const client of await self.clients.matchAll({includeUncontrolled:true,type:'window'}))client.postMessage(data);}
-async function status(){const cache=await caches.open(CACHE);let count=0;for(const path of ASSETS)if(await valid(await cache.match(absolute(path)),path))count++;return{type:'OFFLINE_STATUS',version:'1.3.1.0',ready:count===ASSETS.length,count,total:ASSETS.length};}
+async function status(){const cache=await caches.open(CACHE);let count=0;for(const path of ASSETS)if(await valid(await cache.match(absolute(path)),path))count++;return{type:'OFFLINE_STATUS',version:'1.3.2.0',ready:count===ASSETS.length,count,total:ASSETS.length};}
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  try{
   // Activate only a complete release. A failed download keeps the old worker.
