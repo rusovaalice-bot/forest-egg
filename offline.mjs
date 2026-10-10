@@ -1,4 +1,4 @@
-export const RELEASE='1.4.0';
+export const RELEASE='1.4.1';
 // Availability is measured from the installed cache, not navigator.onLine.
 export function askStatus(worker,timeout=8000){
  return new Promise((resolve,reject)=>{

@@ -1,3 +1,4 @@
+export const ENGINE_FEATURES='gentle-sleep-v1';
 export const VERSION=1, EGG_MINUTES=10, KEY='ragna.forest-egg.v1';
 export const TYPES={fox:{title:'Лисёнок Локи',name:'Локи',trait:'Любопытный хитрец',food:6,fun:8,dirt:4,energy:5},wolf:{title:'Волчонок Фенрир',name:'Фенрир',trait:'Верный и независимый',food:7,fun:5,dirt:4,energy:4},deer:{title:'Дух Иггдрасиля',name:'Эйктюрнир',trait:'Чуткий хранитель леса',food:5,fun:5,dirt:7,energy:5}};
 const clamp=(x,min=0,max=100)=>Math.min(max,Math.max(min,x));

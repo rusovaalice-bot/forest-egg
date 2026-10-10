@@ -1,7 +1,7 @@
-import {createMusic} from './music.mjs';
-import {petImage} from './pet-art.mjs';
-import {setupOffline} from './offline.mjs';
-import {KEY,VERSION,TYPES,EGG_MINUTES,newGame,advance,action,hatch,stage,validate,log} from './engine.mjs';
+import {createMusic} from './music.mjs?v=1.4.1';
+import {petImage} from './pet-art.mjs?v=1.4.1';
+import {setupOffline} from './offline.mjs?v=1.4.1';
+import {KEY,VERSION,TYPES,EGG_MINUTES,newGame,advance,action,hatch,stage,validate,log} from './engine.mjs?v=1.4.1';
 const $=id=>document.getElementById(id),icon=id=>`<svg aria-hidden="true"><use href="#${id}"/></svg>`;
 let state,knownRaw=null,storageWorks=true,activeTab='home',sound=false,audio,toastTimer;
 function randomSeed(){try{return crypto.getRandomValues(new Uint32Array(1))[0]/4294967296;}catch{return Math.random();}}
