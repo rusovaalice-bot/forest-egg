@@ -11,3 +11,5 @@
 .scene.sleeping{background-color:#122d30}.scene.sleeping .sleep-z{font-size:19px;opacity:.65;animation-duration:6s}
 @keyframes sleep-breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.014)}}
 @media(prefers-reduced-motion:reduce){.scene.sleeping .pet-touch img,.scene.sleeping .sleep-z{animation:none}}
+
+.music-card input[type="range"]{width:100%;padding:0;accent-color:#294c3c;margin:14px 0 22px;min-height:32px}.music-volume-label{display:flex;justify-content:space-between;gap:16px}.effects-label{display:flex;align-items:center;gap:12px;margin-bottom:18px}.effects-label input[type="checkbox"]{width:22px;height:22px;flex:none;accent-color:#294c3c}.music-card small{display:block;margin-top:14px}.music-credit a{color:#294c3c;text-decoration:underline}.music-card #music-status{font-size:15px}

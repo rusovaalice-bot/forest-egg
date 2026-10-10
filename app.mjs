@@ -1,3 +1,4 @@
+import {createMusic} from './music.mjs';
 import {petImage} from './pet-art.mjs';
 import {setupOffline} from './offline.mjs';
 import {KEY,VERSION,TYPES,EGG_MINUTES,newGame,advance,action,hatch,stage,validate,log} from './engine.mjs';
@@ -61,7 +62,15 @@ function confirm(title,text){$('confirm-title').textContent=title;$('confirm-tex
 let hatchBusy=false;
  $('hatch').addEventListener('click',()=>{if(hatchBusy)return;sync();if(state.paused)return notify('Сначала сними игру с паузы.');advance(state);if(state.incubation<EGG_MINUTES)return;hatchBusy=true;$('scene').classList.add('hatching');$('hatch').disabled=true;setTimeout(()=>{sync();if(!state.paused&&hatch(state)){save();render();pop();chime();notify('Добро пожаловать, '+state.name+'!');}else render();$('scene').classList.remove('hatching');$('hatch').disabled=false;hatchBusy=false;},900);});
  $('pet-touch').addEventListener('click',()=>doAction(state.phase==='egg'?'warm':'soothe'));$('rescue').addEventListener('click',()=>doAction('rescue'));
- $('sound').addEventListener('click',()=>{sound=!sound;$('sound').style.background=sound?'#dce8ce':'transparent';$('sound').setAttribute('aria-label',sound?'Выключить звуки':'Включить звуки');$('sound').setAttribute('aria-pressed',String(sound));chime();notify(sound?'Тихие звуки включены.':'Звуки выключены.');});
+ const music=createMusic({createAudio:src=>new Audio(src),createContext:()=>new(window.AudioContext||window.webkitAudioContext)(),storage:{getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)},onChange:({volume,enabled,pending,error})=>{
+  $('sound').style.background=enabled?'#dce8ce':'transparent';$('sound').setAttribute('aria-label',enabled?'Выключить музыку':'Включить музыку');$('sound').setAttribute('aria-pressed',String(enabled));
+  $('music-toggle').textContent=enabled?'Выключить музыку':pending?'Отменить включение':'Включить музыку';$('music-toggle').setAttribute('aria-pressed',String(enabled));
+  $('music-volume').value=volume;$('music-volume-value').textContent=volume+'%';$('music-status').textContent=error||(enabled?'Музыка звучит.':pending?'Включаю музыку…':'Музыка выключена. Нажми ♪, когда захочется уюта.');
+ }});
+ $('sound').addEventListener('click',()=>music.toggle());$('music-toggle').addEventListener('click',()=>music.toggle());
+ $('music-volume').addEventListener('input',e=>music.setVolume(e.target.value));
+ $('effects-enabled').addEventListener('change',e=>{sound=e.target.checked;chime();});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)music.stop();});window.addEventListener('pagehide',()=>music.stop());
  $('rename').addEventListener('click',()=>{sync();if(state.phase==='egg')return;const name=$('name-input').value.trim();if(!name)return notify('Впиши имя малыша.');advance(state);state.name=name.slice(0,32);log(state,'Теперь подопечного зовут '+state.name+'.');save();render();notify('Имя сохранено.');});
  $('pause').addEventListener('click',()=>{sync();advance(state);state.paused=!state.paused;log(state,state.paused?'Забота на паузе: потребности заморожены.':'Вернулись к лесной жизни.');save();render();notify(state.paused?'Потребности на паузе.':'Игра продолжается.');});
  $('export').addEventListener('click',()=>{sync();advance(state);save();const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='forest-egg-save-'+new Date().toISOString().slice(0,10)+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);notify('Резервная копия готова. Сохрани файл в «Файлы».');});

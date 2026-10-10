@@ -1,18 +1,18 @@
-const CACHE='forest-egg-shell-v1.3.2.0';
-const ASSETS=["./index.html","./style.css","./app.mjs","./engine.mjs","./offline.mjs","./pet-art.mjs","./manifest.webmanifest","./icon.svg","./assets/deer-adult-sleep.png","./assets/deer-adult.png","./assets/deer-sleep.png","./assets/deer-teen-sleep.png","./assets/deer-teen.png","./assets/deer-young-sleep.png","./assets/deer-young.png","./assets/deer.png","./assets/egg.png","./assets/fox-adult-sleep.png","./assets/fox-adult.png","./assets/fox-sleep.png","./assets/fox-teen-sleep.png","./assets/fox-teen.png","./assets/fox-young-sleep.png","./assets/fox-young.png","./assets/fox.png","./assets/wolf-adult-sleep.png","./assets/wolf-adult.png","./assets/wolf-sleep.png","./assets/wolf-teen-sleep.png","./assets/wolf-teen.png","./assets/wolf-young-sleep.png","./assets/wolf-young.png","./assets/wolf.png"];
+const CACHE='forest-egg-shell-v1.4.0';
+const ASSETS=["./index.html","./style.css","./app.mjs","./engine.mjs","./offline.mjs","./pet-art.mjs","./music.mjs","./assets/forest-music.mp3","./manifest.webmanifest","./icon.svg","./assets/deer-adult-sleep.png","./assets/deer-adult.png","./assets/deer-sleep.png","./assets/deer-teen-sleep.png","./assets/deer-teen.png","./assets/deer-young-sleep.png","./assets/deer-young.png","./assets/deer.png","./assets/egg.png","./assets/fox-adult-sleep.png","./assets/fox-adult.png","./assets/fox-sleep.png","./assets/fox-teen-sleep.png","./assets/fox-teen.png","./assets/fox-young-sleep.png","./assets/fox-young.png","./assets/fox.png","./assets/wolf-adult-sleep.png","./assets/wolf-adult.png","./assets/wolf-sleep.png","./assets/wolf-teen-sleep.png","./assets/wolf-teen.png","./assets/wolf-young-sleep.png","./assets/wolf-young.png","./assets/wolf.png"];
 const scope=new URL(self.registration.scope);
 const absolute=path=>new URL(path,scope).href;
 const expected=new Map(ASSETS.map(path=>[new URL(path,scope).pathname,path]));
-const mime=path=>path.endsWith('.png')?'image/png':path.endsWith('.svg')?'image/svg+xml':path.endsWith('.css')?'text/css':path.endsWith('.mjs')?'javascript':path.endsWith('.webmanifest')?'json':'text/html';
+const mime=path=>path.endsWith('.mp3')?'audio/mpeg':path.endsWith('.png')?'image/png':path.endsWith('.svg')?'image/svg+xml':path.endsWith('.css')?'text/css':path.endsWith('.mjs')?'javascript':path.endsWith('.webmanifest')?'json':'text/html';
 async function valid(response,path){
  if(!response||!response.ok||response.redirected)return false;
  const contentType=response.headers.get('content-type')||'';
  if(!contentType.includes(mime(path)))return false;
- if(path.endsWith('.html'))return(await response.clone().text()).includes('data-forest-app="1.3.2"');
+ if(path.endsWith('.html'))return(await response.clone().text()).includes('data-forest-app="1.4.0"');
  return true;
 }
 async function broadcast(data){for(const client of await self.clients.matchAll({includeUncontrolled:true,type:'window'}))client.postMessage(data);}
-async function status(){const cache=await caches.open(CACHE);let count=0;for(const path of ASSETS)if(await valid(await cache.match(absolute(path)),path))count++;return{type:'OFFLINE_STATUS',version:'1.3.2.0',ready:count===ASSETS.length,count,total:ASSETS.length};}
+async function status(){const cache=await caches.open(CACHE);let count=0;for(const path of ASSETS)if(await valid(await cache.match(absolute(path)),path))count++;return{type:'OFFLINE_STATUS',version:'1.4.0',ready:count===ASSETS.length,count,total:ASSETS.length};}
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  try{
   // Activate only a complete release. A failed download keeps the old worker.
@@ -45,9 +45,17 @@ self.addEventListener('fetch',event=>{
  if(!path)return;
  event.respondWith((async()=>{
   const cache=await caches.open(CACHE),saved=await cache.match(absolute(path));
-  if(await valid(saved,path))return saved;
+  if(await valid(saved,path))return path.endsWith('.mp3')&&event.request.headers.get('range')?audioRange(saved,event.request.headers.get('range')):saved;
   const response=await fetch(event.request);
   if(await valid(response,path))await cache.put(absolute(path),response.clone());
   return response;
  })());
 });
+
+async function audioRange(response,range){
+ const data=await response.arrayBuffer(),length=data.byteLength,match=/^bytes=(\d*)-(\d*)$/.exec(range);
+ let start,end;
+ if(match&&(match[1]||match[2])){start=match[1]?Number(match[1]):Math.max(0,length-Number(match[2]));end=match[1]&&match[2]?Math.min(length-1,Number(match[2])):length-1;}
+ if(!match||!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start>end||start>=length)return new Response(null,{status:416,headers:{'content-range':`bytes */${length}`}});
+ return new Response(data.slice(start,end+1),{status:206,headers:{'content-type':'audio/mpeg','accept-ranges':'bytes','content-range':`bytes ${start}-${end}/${length}`,'content-length':String(end-start+1)}});
+}
