@@ -7,7 +7,9 @@ const mime=asset=>{const path=asset.split('?')[0];return path.endsWith('.mp3')?'
 async function valid(response,path){
  if(!response||!response.ok||response.redirected)return false;
  const contentType=response.headers.get('content-type')||'';
- if(!contentType.includes(mime(path)))return false;
+ // GitHub Pages serves MP3 as audio/mp3; other hosts use audio/mpeg.
+ if(path.split('?')[0].endsWith('.mp3')){if(!/^audio\/(?:mpeg|mp3)(?:\s*;|$)/i.test(contentType))return false;}
+ else if(!contentType.includes(mime(path)))return false;
  if(path.split('?')[0].endsWith('engine.mjs'))return(await response.clone().text()).includes("ENGINE_FEATURES='gentle-sleep-v1'");
  if(path.endsWith('.html'))return(await response.clone().text()).includes('data-forest-app="1.4.1"');
  return true;
