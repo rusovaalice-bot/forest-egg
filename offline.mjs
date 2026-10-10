@@ -1,4 +1,4 @@
-export const RELEASE='1.2.0';
+export const RELEASE='1.3.0';
 // Availability is measured from the installed cache, not navigator.onLine.
 export function askStatus(worker,timeout=8000){
  return new Promise((resolve,reject)=>{
@@ -15,7 +15,7 @@ export async function setupOffline({show,notify,button}){
   if(data?.type==='OFFLINE_FAILED'){show('error','Не все файлы загрузились. Подключи сеть и нажми «Подготовить офлайн».');return;}
   if(data?.type!=='OFFLINE_STATUS')return;
   if(data.ready&&data.version===RELEASE)show('ready','Все файлы игры сохранены на устройстве. Открой её снова без VPN или в авиарежиме, чтобы проверить запуск.');
-  else show('loading',`Сохранено ${Number(data.count)||0} из ${Number(data.total)||14} файлов. Дождись завершения загрузки.`);
+  else show('loading',`Сохранено ${Number(data.count)||0} из ${Number(data.total)||33} файлов. Дождись завершения загрузки.`);
  };
  navigator.serviceWorker.addEventListener('message',event=>report(event.data));
  const inspect=async()=>{
