@@ -1,8 +1,8 @@
-import {createLokiAnimator} from './loki-animation.mjs?v=1.5.0';
-import {createMusic} from './music.mjs?v=1.5.0';
-import {petImage} from './pet-art.mjs?v=1.5.0';
-import {setupOffline} from './offline.mjs?v=1.5.0';
-import {KEY,VERSION,TYPES,EGG_MINUTES,newGame,advance,action,hatch,stage,validate,log} from './engine.mjs?v=1.5.0';
+import {createLokiAnimator} from './loki-animation.mjs?v=1.6.0';
+import {createMusic} from './music.mjs?v=1.6.0';
+import {petImage} from './pet-art.mjs?v=1.6.0';
+import {setupOffline} from './offline.mjs?v=1.6.0';
+import {KEY,VERSION,TYPES,EGG_MINUTES,newGame,advance,action,hatch,stage,validate,log} from './engine.mjs?v=1.6.0';
 const $=id=>document.getElementById(id),icon=id=>`<svg aria-hidden="true"><use href="#${id}"/></svg>`;
 const lokiAnimator=createLokiAnimator({image:$('pet-image'),host:$('pet-touch')});
 let state,knownRaw=null,storageWorks=true,activeTab='home',sound=false,audio,toastTimer;
@@ -16,7 +16,7 @@ function sync(){if(!storageWorks)return;try{const raw=localStorage.getItem(KEY);
 function chime(){if(!sound)return;try{audio??=new(window.AudioContext||window.webkitAudioContext)();audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type='sine';o.frequency.setValueAtTime(523,audio.currentTime);o.frequency.exponentialRampToValueAtTime(784,audio.currentTime+.15);g.gain.setValueAtTime(.055,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.35);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+.36);}catch{}}
 const date=at=>new Intl.DateTimeFormat('ru',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(at);
 function pop(){const el=$('emotion');el.classList.remove('pop');el.textContent=state.phase==='egg'?'✧':'♡';void el.offsetWidth;el.classList.add('pop');}
-function doAction(id){sync();const before=state.careCount,msg=action(state,id);if(state.careCount>before){pop();if(!state.sleeping)chime();}save();render();notify(msg);}
+function doAction(id){sync();const before=state.careCount,msg=action(state,id);if(state.careCount>before){pop();if(!state.sleeping){chime();if(id==='soothe')void lokiAnimator.rise();}}save();render();notify(msg);}
 const meterSpec={food:['Сытость','food'],energy:['Энергия','moon'],clean:['Чистота','drop'],mood:['Настроение','spark'],health:['Здоровье','cross'],bond:['Привязанность','heart'],warmth:['Тепло','sun']};
 function meter(k){const [title,i]=meterSpec[k],v=Math.round(state.stats[k]);return `<div class="meter ${v<25?'low':''}"><div class="meter-top"><span class="meter-label">${icon(i)}${title}</span><span class="meter-number">${v}<span> / 100</span></span></div><div class="progress" role="progressbar" aria-label="${title}" aria-valuenow="${v}" aria-valuemin="0" aria-valuemax="100"><span style="width:${v}%"></span></div></div>`;}
 function render(){
