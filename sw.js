@@ -1,5 +1,5 @@
-const CACHE='forest-egg-shell-v1.6.0';
-const ASSETS=["./loki-rise.mjs?v=1.6.0","./assets/fox-rise.png","./loki-idle.mjs?v=1.6.0","./loki-animation.mjs?v=1.6.0","./assets/fox-blink.png","./assets/fox-teen-blink.png","./assets/fox-young-blink.png","./assets/fox-adult-blink.png","./index.html","./style.css?v=1.6.0","./app.mjs?v=1.6.0","./engine.mjs?v=1.6.0","./offline.mjs?v=1.6.0","./pet-art.mjs?v=1.6.0","./music.mjs?v=1.6.0","./assets/forest-music.mp3","./manifest.webmanifest","./icon.svg","./assets/deer-adult-sleep.png","./assets/deer-adult.png","./assets/deer-sleep.png","./assets/deer-teen-sleep.png","./assets/deer-teen.png","./assets/deer-young-sleep.png","./assets/deer-young.png","./assets/deer.png","./assets/egg.png","./assets/fox-adult-sleep.png","./assets/fox-adult.png","./assets/fox-sleep.png","./assets/fox-teen-sleep.png","./assets/fox-teen.png","./assets/fox-young-sleep.png","./assets/fox-young.png","./assets/fox.png","./assets/wolf-adult-sleep.png","./assets/wolf-adult.png","./assets/wolf-sleep.png","./assets/wolf-teen-sleep.png","./assets/wolf-teen.png","./assets/wolf-young-sleep.png","./assets/wolf-young.png","./assets/wolf.png"];
+const CACHE='forest-egg-shell-v1.7.0';
+const ASSETS=["./loki-walk.mjs?v=1.7.0","./assets/fox-walk.png","./loki-rise.mjs?v=1.7.0","./assets/fox-rise.png","./loki-idle.mjs?v=1.7.0","./loki-animation.mjs?v=1.7.0","./assets/fox-blink.png","./assets/fox-teen-blink.png","./assets/fox-young-blink.png","./assets/fox-adult-blink.png","./index.html","./style.css?v=1.7.0","./app.mjs?v=1.7.0","./engine.mjs?v=1.7.0","./offline.mjs?v=1.7.0","./pet-art.mjs?v=1.7.0","./music.mjs?v=1.7.0","./assets/forest-music.mp3","./manifest.webmanifest","./icon.svg","./assets/deer-adult-sleep.png","./assets/deer-adult.png","./assets/deer-sleep.png","./assets/deer-teen-sleep.png","./assets/deer-teen.png","./assets/deer-young-sleep.png","./assets/deer-young.png","./assets/deer.png","./assets/egg.png","./assets/fox-adult-sleep.png","./assets/fox-adult.png","./assets/fox-sleep.png","./assets/fox-teen-sleep.png","./assets/fox-teen.png","./assets/fox-young-sleep.png","./assets/fox-young.png","./assets/fox.png","./assets/wolf-adult-sleep.png","./assets/wolf-adult.png","./assets/wolf-sleep.png","./assets/wolf-teen-sleep.png","./assets/wolf-teen.png","./assets/wolf-young-sleep.png","./assets/wolf-young.png","./assets/wolf.png"];
 const scope=new URL(self.registration.scope);
 const absolute=path=>new URL(path,scope).href;
 const expected=new Map(ASSETS.map(path=>[new URL(path,scope).pathname,path]));
@@ -11,11 +11,11 @@ async function valid(response,path){
  if(path.split('?')[0].endsWith('.mp3')){if(!/^audio\/(?:mpeg|mp3)(?:\s*;|$)/i.test(contentType))return false;}
  else if(!contentType.includes(mime(path)))return false;
  if(path.split('?')[0].endsWith('engine.mjs'))return(await response.clone().text()).includes("ENGINE_FEATURES='gentle-sleep-v1'");
- if(path.endsWith('.html'))return(await response.clone().text()).includes('data-forest-app="1.6.0"');
+ if(path.endsWith('.html'))return(await response.clone().text()).includes('data-forest-app="1.7.0"');
  return true;
 }
 async function broadcast(data){for(const client of await self.clients.matchAll({includeUncontrolled:true,type:'window'}))client.postMessage(data);}
-async function status(){const cache=await caches.open(CACHE);let count=0;for(const path of ASSETS)if(await valid(await cache.match(absolute(path)),path))count++;return{type:'OFFLINE_STATUS',version:'1.6.0',ready:count===ASSETS.length,count,total:ASSETS.length};}
+async function status(){const cache=await caches.open(CACHE);let count=0;for(const path of ASSETS)if(await valid(await cache.match(absolute(path)),path))count++;return{type:'OFFLINE_STATUS',version:'1.7.0',ready:count===ASSETS.length,count,total:ASSETS.length};}
 let preparing=null;
 async function download(path){
  const controller=new AbortController();let timer;
@@ -34,10 +34,10 @@ function prepareFiles(){
   await Promise.all(Array.from({length:4},async()=>{
    while(!failure&&cursor<ASSETS.length){const path=ASSETS[cursor++];try{
     if(!await valid(await cache.match(absolute(path)),path))await cache.put(absolute(path),await download(path));
-    count++;await broadcast({type:'OFFLINE_PROGRESS',version:'1.6.0',count,total:ASSETS.length,ready:false});
+    count++;await broadcast({type:'OFFLINE_PROGRESS',version:'1.7.0',count,total:ASSETS.length,ready:false});
    }catch(error){failure={error,asset:path.replace('./','').split('?')[0]};}}
   }));
-  if(failure){await broadcast({type:'OFFLINE_FAILED',version:'1.6.0',asset:failure.asset});failure.error.asset=failure.asset;throw failure.error;}
+  if(failure){await broadcast({type:'OFFLINE_FAILED',version:'1.7.0',asset:failure.asset});failure.error.asset=failure.asset;throw failure.error;}
   const result=await status();if(!result.ready)throw Error('Incomplete offline release');return result;
  })().finally(()=>{preparing=null;});return preparing;
 }
@@ -54,7 +54,7 @@ self.addEventListener('message',event=>{
  if(!['OFFLINE_STATUS','OFFLINE_PREPARE'].includes(event.data?.type))return;
  event.waitUntil((async()=>{
   try{const result=event.data.type==='OFFLINE_PREPARE'?await prepareFiles():await status();event.ports?.[0]?.postMessage(result);if(event.data.type==='OFFLINE_PREPARE')await broadcast(result);}
-  catch(error){event.ports?.[0]?.postMessage({type:'OFFLINE_FAILED',version:'1.6.0',asset:error.asset});}
+  catch(error){event.ports?.[0]?.postMessage({type:'OFFLINE_FAILED',version:'1.7.0',asset:error.asset});}
  })());
 });
 self.addEventListener('fetch',event=>{

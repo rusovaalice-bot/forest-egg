@@ -1,12 +1,13 @@
-import {createLokiRenderer} from './loki-idle.mjs?v=1.6.0';
-import {createRiseRenderer} from './loki-rise.mjs?v=1.6.0';
+import {createLokiRenderer} from './loki-idle.mjs?v=1.7.0';
+import {createRiseRenderer} from './loki-rise.mjs?v=1.7.0';
+import {createWalkRenderer} from './loki-walk.mjs?v=1.7.0';
 
 export function lokiVariant(path){
  const match=/\/fox(?:-(teen|young|adult))?(-sleep)?\.png$/.exec(path);
  return match?{age:match[1]||'baby',sleeping:!!match[2],blink:path.replace('.png','-blink.png')}:null;
 }
 
-export function createLokiAnimator({image,host,env=window,doc=document,makeRenderer=createLokiRenderer,makeRiseRenderer=createRiseRenderer}){
+export function createLokiAnimator({image,host,env=window,doc=document,makeRenderer=createLokiRenderer,makeRiseRenderer=createRiseRenderer,makeWalkRenderer=createWalkRenderer}){
  const canvas=doc.createElement('canvas');canvas.width=512;canvas.height=512;canvas.className='loki-canvas';canvas.setAttribute('aria-hidden','true');canvas.hidden=true;host.append(canvas);
  const makeCanvas=(w,h)=>{const c=doc.createElement('canvas');c.width=w;c.height=h;return c;};
  const assets=new Map(),motion=env.matchMedia('(prefers-reduced-motion: reduce)');
@@ -27,7 +28,7 @@ export function createLokiAnimator({image,host,env=window,doc=document,makeRende
   const variant=lokiVariant(current?.path||'');
   if(!draw||!animate()||variant?.age!=='baby'||variant.sleeping||riseAt!==null)return false;
   const own=revision;
-  try{const sheet=await load('./assets/fox-rise.png');if(own!==revision||!animate()||disposed)return false;riseDraw=makeRiseRenderer({canvas,sheet});riseAt=time;paint();return true;}catch{return false;}
+  try{const [sheet,walkSheet]=await Promise.all([load('./assets/fox-rise.png'),load('./assets/fox-walk.png').catch(()=>null)]);if(own!==revision||!animate()||disposed||riseAt!==null)return false;riseDraw=walkSheet?makeWalkRenderer({canvas,sheet,walkSheet}):makeRiseRenderer({canvas,sheet});riseAt=time;paint();return true;}catch{return false;}
  }
  async function update(next){
   if(disposed)return;current={...next};canvas.style.width=next.size;canvas.style.height=next.size;

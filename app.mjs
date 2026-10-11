@@ -1,8 +1,8 @@
-import {createLokiAnimator} from './loki-animation.mjs?v=1.6.0';
-import {createMusic} from './music.mjs?v=1.6.0';
-import {petImage} from './pet-art.mjs?v=1.6.0';
-import {setupOffline} from './offline.mjs?v=1.6.0';
-import {KEY,VERSION,TYPES,EGG_MINUTES,newGame,advance,action,hatch,stage,validate,log} from './engine.mjs?v=1.6.0';
+import {createLokiAnimator} from './loki-animation.mjs?v=1.7.0';
+import {createMusic} from './music.mjs?v=1.7.0';
+import {petImage} from './pet-art.mjs?v=1.7.0';
+import {setupOffline} from './offline.mjs?v=1.7.0';
+import {KEY,VERSION,TYPES,EGG_MINUTES,newGame,advance,action,hatch,stage,validate,log} from './engine.mjs?v=1.7.0';
 const $=id=>document.getElementById(id),icon=id=>`<svg aria-hidden="true"><use href="#${id}"/></svg>`;
 const lokiAnimator=createLokiAnimator({image:$('pet-image'),host:$('pet-touch')});
 let state,knownRaw=null,storageWorks=true,activeTab='home',sound=false,audio,toastTimer;
