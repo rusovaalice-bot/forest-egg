@@ -1,8 +1,10 @@
-import {createMusic} from './music.mjs?v=1.4.2';
-import {petImage} from './pet-art.mjs?v=1.4.2';
-import {setupOffline} from './offline.mjs?v=1.4.2';
-import {KEY,VERSION,TYPES,EGG_MINUTES,newGame,advance,action,hatch,stage,validate,log} from './engine.mjs?v=1.4.2';
+import {createLokiAnimator} from './loki-animation.mjs?v=1.5.0';
+import {createMusic} from './music.mjs?v=1.5.0';
+import {petImage} from './pet-art.mjs?v=1.5.0';
+import {setupOffline} from './offline.mjs?v=1.5.0';
+import {KEY,VERSION,TYPES,EGG_MINUTES,newGame,advance,action,hatch,stage,validate,log} from './engine.mjs?v=1.5.0';
 const $=id=>document.getElementById(id),icon=id=>`<svg aria-hidden="true"><use href="#${id}"/></svg>`;
+const lokiAnimator=createLokiAnimator({image:$('pet-image'),host:$('pet-touch')});
 let state,knownRaw=null,storageWorks=true,activeTab='home',sound=false,audio,toastTimer;
 function randomSeed(){try{return crypto.getRandomValues(new Uint32Array(1))[0]/4294967296;}catch{return Math.random();}}
 let loadNotice='';
@@ -26,6 +28,7 @@ function render(){
  const image=$('pet-image'),path=petImage(state,now);if(image.getAttribute('src')!==path)image.src=path;
  image.alt=egg?'Лесное яйцо с живыми веточками и листиками':TYPES[state.species].title+(state.sleeping?' · лежит и спит с закрытыми глазами':'');
  const size=egg?1:days<7?.92:days<30?.97:days<90?1:1.05;image.style.width=`${size*100}%`;image.style.height=`${size*100}%`;
+ lokiAnimator.update({phase:state.phase,species:state.species,path,size:`${size*100}%`,paused:state.paused,visible:activeTab==='home'});
  $('pet-stage').textContent=stage(state).toLocaleUpperCase('ru');$('pet-name').textContent=state.name+' ✧';$('age').textContent='День '+(days+1);
  $('pet-trait').textContent=egg?'Кто появится на свет? Забота подскажет лесу.':TYPES[state.species].trait;
  $('scene-caption').textContent=egg?'Внутри кто-то ждёт встречи с тобой':state.sleeping?'Пусть ему приснятся тёплые лесные сны':state.sick?'Сейчас ему особенно нужна твоя забота':a.mood<25?'Загрустил. Побудь рядом немного':'Ты рядом — и лес становится уютнее';

@@ -13,3 +13,11 @@
 @media(prefers-reduced-motion:reduce){.scene.sleeping .pet-touch img,.scene.sleeping .sleep-z{animation:none}}
 
 .music-card input[type="range"]{width:100%;padding:0;accent-color:#294c3c;margin:14px 0 22px;min-height:32px}.music-volume-label{display:flex;justify-content:space-between;gap:16px}.effects-label{display:flex;align-items:center;gap:12px;margin-bottom:18px}.effects-label input[type="checkbox"]{width:22px;height:22px;flex:none;accent-color:#294c3c}.music-card small{display:block;margin-top:14px}.music-credit a{color:#294c3c;text-decoration:underline}.music-card #music-status{font-size:15px}
+
+/* Loki uses a local canvas sprite; the image remains the accessible fallback. */
+.pet-touch img.loki-animated{opacity:0;animation:none!important}
+.loki-canvas{position:absolute;left:50%;bottom:0;transform:translateX(-50%);pointer-events:none;filter:drop-shadow(0 16px 12px #031a1c66)}
+.loki-canvas[hidden]{display:none}
+.scene.sleeping .loki-canvas{filter:brightness(.92) drop-shadow(0 16px 12px #031a1c66)}
+.scene.sick .loki-canvas{filter:saturate(.65) drop-shadow(0 16px 12px #031a1c66)}
+.scene.sick.sleeping .loki-canvas{filter:brightness(.92) saturate(.65) drop-shadow(0 16px 12px #031a1c66)}
